@@ -58,7 +58,7 @@
 		3-1. Firmware부분 가상으로 Java에서 구현 - Thread동작하여 100ms마다 값이 변경
 		3-2. 실제 Java프로그램 부분 MyPCr.java함수 호출 - 값을 변경하는 것 제어
 		
-// 오늘 수업 내용은 1, 2번
+	// 오늘 수업 내용은 1, 2번
 
 ### Git 설치
 	git-2.6.4 setup 실행
@@ -69,3 +69,43 @@
 	기본 온도 25, target온도, 이전 target온도 등을 가지게 할 것
 	
 	void initDialog() --> public void run()이랑 동일한 의미
+
+======================================================================
+	## 처음 깃만들고 맨 처음에 파일을 올릴 때
+	    git config --global user.name "NAME"
+	    git config --global user.email "EMAIL"
+	    git init
+	    touch README.md
+	    git add --all
+	    git commit -m "first commit"
+	    git remote add origin "https://github.com/dnr1105/MyPCR_Emulator.git"
+	    git push -u origin master
+
+	## 깃에 올라간 파일을 가져와서 편집
+	    git clone https://github.com/dnr1105/MyPCR_Emulator.git
+	    cd ./src/com/mypcr/
+	    ls -al
+	    git add Main.java
+	    git commit -m "Second commit"
+	    git push origin master
+
+	## 이후 간단한 수정본 깃에 올리기
+	    git add --all // 혹은 자신의 변경된 파일명
+	    git commit -m "emulator"
+	    git push
+
+	## 깃에 올라간 파일 삭제
+	    cd emulator/
+	    ls -al
+	    git rm MyPCR2.java
+	    git commit -m "MyPCR2 byebye"
+	    git push origin master
+
+	## 함께 사용하는 깃 동기화하여 올리기
+	    git add Main.java
+	    git commit -m "Hello infinity"
+	    git push origin master
+	    git fetch
+	    git pull origin master
+	    git push origin master
+======================================================================
