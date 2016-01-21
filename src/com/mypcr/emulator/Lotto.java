@@ -1,7 +1,7 @@
 package com.mypcr.emulator;
 
 public class Lotto {
-	public int[] lotto(int length) {
+	public static int[] lotto(int length) {
 		int temp[] = new int[length];
 
 		for (int i = 0; i < length; ++i) {
@@ -9,7 +9,7 @@ public class Lotto {
 
 			for (int j = 0; j < i; ++j) {
 				if (temp[j] == temp[i]) {
-					System.out.println("중복 값");
+//					System.out.println("중복 값");
 					--i;
 					break;
 				}
