@@ -70,9 +70,9 @@ public class MyPCR {
 		}
 		else
 		{
-			System.out.println( "================================" );
+			System.out.println( "====================" );
 			System.out.println( "Label	Temp	Time" );
-			System.out.println( "================================" );
+			System.out.println( "====================" );
 			for(int i = 0; i < list.size( ); i++)
 			{
 				System.out.print( list.get( i ).getLable( )+"\t" );

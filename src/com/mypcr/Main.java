@@ -3,17 +3,17 @@ package com.mypcr;
 
 import java.awt.AWTException;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import com.mypcr.emulator.MyPCR;
-import com.mypcr.emulator.Protocol;
 
 public class Main
 {
 	public static void main( String[] args ) throws AWTException
 	{
-		BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
+//		BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
 		
 		String pcr1 =	"1	50	40\n"+
 						"2	kk	50\n"+
@@ -28,11 +28,28 @@ public class Main
 		MyPCR mypcr = new MyPCR();
 //		mypcr.showProtocolList( mypcr.makeProtocolList( pcr1 ) );
 //		mypcr.showProtocolList( mypcr.makeProtocolList( pcr2 ) );
-		mypcr.showProtocolList( mypcr.makeProtocolList( pcr3 ) );
+//		mypcr.showProtocolList( mypcr.makeProtocolList( pcr3 ) );
+		
+		String str = "";
+		String line;
 		
 		try
 		{
-			br.close( );
+			BufferedReader fr = new BufferedReader( new FileReader( new File( "protocol.txt" ) ) );
+			
+			while((line = fr.readLine( )) != null)
+			{
+				str += line+"\n";
+			}
+			mypcr.showProtocolList( mypcr.makeProtocolList( str ) );
+			
+			fr.close( );
+			
+			//			br.close( );
+		}
+		catch( FileNotFoundException fnfe )
+		{
+			fnfe.printStackTrace( );
 		}
 		catch( IOException e )
 		{

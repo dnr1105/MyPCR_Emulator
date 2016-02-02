@@ -71,6 +71,7 @@
 	void initDialog() --> public void run()이랑 동일한 의미
 
 ======================================================================
+# Gighub 사용법
 	## 처음 깃만들고 맨 처음에 파일을 올릴 때
 	    git config --global user.name "NAME"
 	    git config --global user.email "EMAIL"
