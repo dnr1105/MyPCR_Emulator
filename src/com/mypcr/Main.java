@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import com.mypcr.emulator.MyPCR;
+import com.mypcr.emulator.Protocol;
 
 public class Main
 {
@@ -41,7 +43,30 @@ public class Main
 			{
 				str += line+"\n";
 			}
-			mypcr.showProtocolList( mypcr.makeProtocolList( str ) );
+//			mypcr.showProtocolList( mypcr.makeProtocolList( str ) );
+			
+			MyPCR p = new MyPCR();
+			ArrayList<Protocol> list = p.makeProtocolList( str );
+					
+			for(int i = 0; i < list.size(); i++)
+			{
+				Protocol protocol = list.get(i);
+				
+				if(protocol.getLable( ).equals( "GOTO" ))
+				{
+					int target = protocol.getTemp( );
+					int time = protocol.getTime( );
+					protocol.setTime( time-1 );
+					
+					if(time -1 != 0)
+					{
+						i = target -2;
+					}
+				} else
+				{
+					System.out.println( protocol.getLable( ) );
+				}
+			}
 			
 			fr.close( );
 			
