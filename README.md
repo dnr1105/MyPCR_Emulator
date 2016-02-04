@@ -1,6 +1,30 @@
+#	준이형 멘토링 5주차
+##	Date : 2016. 02. 04(목)
+###	수업 내용
+	1. Thread 기초 공부, 모니터링 및 온도 올리기
+	2. 입력 복습
+	3. Protocol 생성
+	4. 상태값 변경 및 출력 실습
+	
+###	과제(수요일 까지 올릴 것) -> 1 -> 3 -> 4 -> 2순으로 하면 편함
+	1. StartPCR(), StopPCR() 할 시, PCR 시작!, PCR종료! 메시지가 뜨도록 바꾸세요
+	2. Start시에, mPrevTargetTemp = 50.0, mTargetTemp = 95.0으로 변경, Run()함수 안에서 mPrevTemp까지 온도 도달 시키고, 
+		그 후에 mTargetTemp까지 온도가 도달하도록 구현. mTargetTemp까지 온도가 도달 할 경우, 자동으로 Stop되도록 구현.
+	3. StartPCR(), StopPCR() 시에, 현재 상태가 맞지 않은 경우 그냥 무시하도록 구현,
+		ex> Start를 했는데 이미 상태가 STATE_RUN이라면 그냥 return 하로고 구현.
+	4. private int mElapsedTime을 선언하고, 0으로 초기화.
+		run() 함수에서, state가 RUN일 경우, 1초 마다 증가시킴.
+		printStatus()함수에서 (String.format( "상태 : %s, 온도 : %3.1f\n, elapsedTime : %s", getStateString( ), this.mTargetTemp, getElapsedTime() )) 으로 구현
+		결과물은 다음과 같음 -> 상태 :동작중, 온도:78.1, elapsedTime:1m 2s
+		
+		run()함수에서의 mTemp += 0.01;로 변경하세요
+		getElapsedTime()함수는 다음과 같이 선언하여 구현하세요.
+		private String getElapsedTime()
+
 #	준이형 멘토링 4주차
 ##	Date : 2016. 02. 02(화)
-###	
+###	과제
+	1. 없음
 
 # 준이형 멘토링_3주차
 ## Date : 2016. 01. 21(목)

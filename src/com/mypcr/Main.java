@@ -3,82 +3,68 @@ package com.mypcr;
 
 import java.awt.AWTException;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
 import com.mypcr.emulator.MyPCR;
-import com.mypcr.emulator.Protocol;
 
 public class Main
 {
 	public static void main( String[] args ) throws AWTException
 	{
-//		BufferedReader br = new BufferedReader( new InputStreamReader( System.in ) );
+		BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
+		final MyPCR mypcr = new MyPCR( );
 		
-		String pcr1 =	"1	50	40\n"+
-						"2	kk	50\n"+
-						"3	60	100\n";
-		
-		String pcr2 =   "1	25	40\n"+
-						"2	40	50\n"+
-						"3	60\n";
-		
-		String pcr3 = "1	45	40\n" + "2	40	50\n" + "3	60	100\n";
-		
-		MyPCR mypcr = new MyPCR();
-//		mypcr.showProtocolList( mypcr.makeProtocolList( pcr1 ) );
-//		mypcr.showProtocolList( mypcr.makeProtocolList( pcr2 ) );
-//		mypcr.showProtocolList( mypcr.makeProtocolList( pcr3 ) );
-		
-		String str = "";
-		String line;
-		
-		try
+		mypcr.start();
+		while( true )
 		{
-			BufferedReader fr = new BufferedReader( new FileReader( new File( "protocol.txt" ) ) );
-			
-			while((line = fr.readLine( )) != null)
+			try
 			{
-				str += line+"\n";
-			}
-//			mypcr.showProtocolList( mypcr.makeProtocolList( str ) );
-			
-			MyPCR p = new MyPCR();
-			ArrayList<Protocol> list = p.makeProtocolList( str );
-					
-			for(int i = 0; i < list.size(); i++)
-			{
-				Protocol protocol = list.get(i);
-				
-				if(protocol.getLable( ).equals( "GOTO" ))
+				String cmd = in.readLine( );
+				if( cmd.equalsIgnoreCase( "Start" ) )
 				{
-					int target = protocol.getTemp( );
-					int time = protocol.getTime( );
-					protocol.setTime( time-1 );
-					
-					if(time -1 != 0)
+					mypcr.startPCR( );
+				}
+				else if( cmd.equalsIgnoreCase( "Stop" ) )
+				{
+					mypcr.stopPCR( );
+				}
+				else if( cmd.equalsIgnoreCase( "Print" ) )
+				{
+					mypcr.printStatus( );
+				}
+				else if( cmd.equals( "monitor" ) )
+				{
+					mypcr.setMonitor( true );
+					while( true )
 					{
-						i = target -2;
+						Thread t = new Thread( ) {
+							public void run( )
+							{
+								while( mypcr.isMonitoring( ) )
+								{
+									try
+									{
+										Thread.sleep( 10 );
+									}
+									catch( Exception e )
+									{
+										e.printStackTrace( );
+									}
+									mypcr.printStatus( );
+								}
+							}
+						};
+						t.start( );
+						
+						in.readLine( );
+						mypcr.setMonitor( false );
 					}
-				} else
-				{
-					System.out.println( protocol.getLable( ) );
 				}
 			}
-			
-			fr.close( );
-			
-			//			br.close( );
-		}
-		catch( FileNotFoundException fnfe )
-		{
-			fnfe.printStackTrace( );
-		}
-		catch( IOException e )
-		{
-			e.printStackTrace( );
+			catch( IOException ioe )
+			{
+				ioe.printStackTrace( );
+			}
 		}
 	}
 }
