@@ -16,7 +16,7 @@
 		run() 함수에서, state가 RUN일 경우, 1초 마다 증가시킴.
 		printStatus()함수에서 
 		(String.format( "상태 : %s, 온도 : %3.1f\n, elapsedTime : %s", 
-						getStateString( ), this.mTargetTemp, getElapsedTime() ))으로 구현
+					getStateString( ), this.mTargetTemp, getElapsedTime() ))으로 구현
 		결과물은 다음과 같음 -> 상태 :동작중, 온도:78.1, elapsedTime:1m 2s
 		
 		run()함수에서의 mTemp += 0.01;로 변경하세요
