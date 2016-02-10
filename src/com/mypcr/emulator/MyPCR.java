@@ -13,9 +13,9 @@ public class MyPCR extends Thread
 	private double				mTemp;
 	private double				mPrevTargetTemp, mTargetTemp;
 	private int					state;
-	private int					mElapsedTime = 0;
-								
-	private boolean				isMonitor	= false;
+	private int					mElapsedTime	= 0;
+												
+	private boolean				isMonitor		= false;
 												
 	private static final int	STATE_READY		= 0x00;
 	private static final int	STATE_RUN		= 0x01;
@@ -31,12 +31,12 @@ public class MyPCR extends Thread
 		mElapsedTime = 0;
 	}
 	
-	public boolean isMonitoring()
+	public boolean isMonitoring( )
 	{
 		return isMonitor;
 	}
 	
-	public void setMonitor(boolean monitor)
+	public void setMonitor( boolean monitor )
 	{
 		this.isMonitor = monitor;
 	}
@@ -47,14 +47,20 @@ public class MyPCR extends Thread
 		{
 			if( this.state == STATE_RUN )
 			{
-				if(mPrevTargetTemp >= mTargetTemp)
+				if( mTemp >= mTargetTemp )
 				{
 					this.stopPCR( );
-				} 
+				}
 				else
 				{
-					mPrevTargetTemp += 0.01;
-					mElapsedTime++;
+					if( mTemp >= mPrevTargetTemp )
+					{
+						mTemp += 0.01;
+					}
+					else
+					{
+						mTemp += 0.01;
+					}
 				}
 			}
 			else
@@ -89,21 +95,24 @@ public class MyPCR extends Thread
 		}
 	}
 	
-	private String getElapsedTime()
+	private String getElapsedTime( )
 	{
 		int time = mElapsedTime;
-		return String.format( "%dh %dm %ds", time/3600, time/60, time%60 );
+		return String.format( "%dh %dm %ds", time / 3600, ( time % 3600 ) / 60, time % 60 );
 	}
 	
 	public void printStatus( )
 	{
-		System.out.print( String.format( "상태 : %s, 온도 : %3.1f, elapsedTime : %s\n",
-				getStateString( ), this.mPrevTargetTemp, getElapsedTime() ) );
+		System.out.print( String.format( "상태 : %s, 온도 : %3.1f, elapsedTime : %s\n", getStateString( ),
+				this.mTemp, getElapsedTime( ) ) );
 	}
 	
 	public void startPCR( )
 	{
-		if(state == STATE_RUN){}
+		if( state == STATE_RUN )
+		{
+		
+		}
 		System.out.println( "PCR 시작!" );
 		state = STATE_RUN;
 		this.mPrevTargetTemp = 50.0;
@@ -113,7 +122,10 @@ public class MyPCR extends Thread
 	
 	public void stopPCR( )
 	{
-		if(state == STATE_READY){}
+		if( state == STATE_READY )
+		{
+		
+		}
 		System.out.println( "PCR 종료!" );
 		state = STATE_READY;
 	}
@@ -200,6 +212,4 @@ public class MyPCR extends Thread
 		
 		return str;
 	}
-	
-	
 }
