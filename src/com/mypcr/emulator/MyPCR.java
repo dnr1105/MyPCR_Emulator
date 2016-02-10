@@ -11,8 +11,9 @@ public class MyPCR extends Thread
 	ArrayList< Protocol >		list			= new ArrayList< Protocol >( );
 												
 	private double				mTemp;
-	private double				mPrevtem, mTargetTemp;
+	private double				mPrevTargetTemp, mTargetTemp;
 	private int					state;
+	private int					mElapsedTime = 0;
 								
 	private boolean				isMonitor	= false;
 												
@@ -24,9 +25,10 @@ public class MyPCR extends Thread
 	public MyPCR( )
 	{
 		mTemp = DEEFAULT_TEMP;
-		mPrevtem = DEEFAULT_TEMP;
+		mPrevTargetTemp = DEEFAULT_TEMP;
 		mTargetTemp = DEEFAULT_TEMP;
 		state = STATE_READY;
+		mElapsedTime = 0;
 	}
 	
 	public boolean isMonitoring()
@@ -45,12 +47,20 @@ public class MyPCR extends Thread
 		{
 			if( this.state == STATE_RUN )
 			{
-				mTargetTemp += 0.25;
+				if(mPrevTargetTemp >= mTargetTemp)
+				{
+					this.stopPCR( );
+				} 
+				else
+				{
+					mPrevTargetTemp += 0.01;
+					mElapsedTime++;
+				}
 			}
 			else
 			{
 				mTemp = DEEFAULT_TEMP;
-				mPrevtem = DEEFAULT_TEMP;
+				mPrevTargetTemp = DEEFAULT_TEMP;
 				mTargetTemp = DEEFAULT_TEMP;
 			}
 			
@@ -79,18 +89,32 @@ public class MyPCR extends Thread
 		}
 	}
 	
+	private String getElapsedTime()
+	{
+		int time = mElapsedTime;
+		return String.format( "%dh %dm %ds", time/3600, time/60, time%60 );
+	}
+	
 	public void printStatus( )
 	{
-		System.out.print( String.format( "상태 : %s, 온도 : %3.1f\n", getStateString( ), this.mTargetTemp ) );
+		System.out.print( String.format( "상태 : %s, 온도 : %3.1f, elapsedTime : %s\n",
+				getStateString( ), this.mPrevTargetTemp, getElapsedTime() ) );
 	}
 	
 	public void startPCR( )
 	{
+		if(state == STATE_RUN){}
+		System.out.println( "PCR 시작!" );
 		state = STATE_RUN;
+		this.mPrevTargetTemp = 50.0;
+		this.mTargetTemp = 95.0;
+		
 	}
 	
 	public void stopPCR( )
 	{
+		if(state == STATE_READY){}
+		System.out.println( "PCR 종료!" );
 		state = STATE_READY;
 	}
 	
@@ -176,4 +200,6 @@ public class MyPCR extends Thread
 		
 		return str;
 	}
+	
+	
 }
