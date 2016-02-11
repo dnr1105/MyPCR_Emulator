@@ -48,7 +48,27 @@ public class MyPCR extends Thread
 		{
 			if( this.state == STATE_RUN )
 			{
-				//»Ï..
+				if((mTemp <= mPrevTargetTemp) && !tempHeat)
+				{
+					if(mTemp >= (mPrevTargetTemp - 0.1))
+					{
+						tempHeat = true;
+					}
+					mTemp += 0.01;
+				}
+				else
+				{
+					if((mTemp >= mTargetTemp) && tempHeat)
+					{
+						if(mTemp <= (mTargetTemp + 0.01))
+						{
+							tempHeat = false;
+							stopPCR( );
+						}
+						mTemp -= 0.01;
+					}
+				}
+					
 				timeTemp++;
 				if(timeTemp%10 == 0)
 					mElapsedTime += 1;
@@ -105,8 +125,8 @@ public class MyPCR extends Thread
 		}
 		System.out.println( "PCR Ω√¿€!" );
 		state = STATE_RUN;
-		this.mPrevTargetTemp = 40.0;
-		this.mTargetTemp = 30.0;
+		this.mPrevTargetTemp = 90.0;
+		this.mTargetTemp = 50.0;
 		
 	}
 	
@@ -118,7 +138,6 @@ public class MyPCR extends Thread
 		}
 		System.out.println( "PCR ¡æ∑·!" );
 		state = STATE_READY;
-		this.stop( );
 	}
 	
 	public ArrayList< Protocol > makeProtocolList( String pcr )
