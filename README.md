@@ -8,7 +8,7 @@
 	
 ###	과제(수요일 까지 올릴 것) -> 1 -> 3 -> 4 -> 2순으로 하면 편함
 	1. StartPCR(), StopPCR() 할 시, PCR 시작!, PCR종료! 메시지가 뜨도록 바꾸세요
-	2. Start시에, mPrevTargetTemp = 50.0, mTargetTemp = 95.0으로 변경, Run()함수 안에서 mPrevTemp까지 온도 도달 시키고, 
+	2. Start시에, mPrevTargetTemp = 90.0, mTargetTemp = 50.0으로 변경, Run()함수 안에서 mPrevTemp까지 온도 도달 시키고, 
 		그 후에 mTargetTemp까지 온도가 도달하도록 구현. mTargetTemp까지 온도가 도달 할 경우, 자동으로 Stop되도록 구현.
 	3. StartPCR(), StopPCR() 시에, 현재 상태가 맞지 않은 경우 그냥 무시하도록 구현,
 		ex> Start를 했는데 이미 상태가 STATE_RUN이라면 그냥 return 하로고 구현.
