@@ -28,7 +28,6 @@ public class MyPCR extends Thread
 		mPrevTargetTemp = DEEFAULT_TEMP;
 		mTargetTemp = DEEFAULT_TEMP;
 		state = STATE_READY;
-		mElapsedTime = 0;
 	}
 	
 	public boolean isMonitoring( )
@@ -42,6 +41,7 @@ public class MyPCR extends Thread
 	}
 	
 	private boolean tempHeat = false;
+	private int timeTemp = 1;
 	public void run( )
 	{
 		while( true )
@@ -49,7 +49,9 @@ public class MyPCR extends Thread
 			if( this.state == STATE_RUN )
 			{
 				//»Ï..
-				mElapsedTime++;
+				timeTemp++;
+				if(timeTemp%10 == 0)
+					mElapsedTime += 1;
 			}
 			else
 			{
