@@ -1,6 +1,20 @@
 #	준이형 멘토링 6주차
 ##	Date : 2016. 02. 11(목)
-
+### 수업 내용
+	1. Thread - run 변경
+	2. mPrevTarget, mTarget Temp 변경
+	3. 현재온도 제어
+	4. 프로토콜 온도값 순서대로 올리고 내리고 코딩
+	
+### 과제
+	1. private ArrayList<Protocol> mProtocolList;	// 멤버 변수 선언
+		위의 리스트에 Protocol.txt 파일에서 읽은 PCR 정보를 불러와서 저장하기.
+		이 작업은 public MyPCR() 생성자에서 수행
+	2. 출력 형태 변경
+		"Label : %s, TargetTemp : %3.1f, Remain : %ds, 상태 : %s, 온도 : %3.1f, elapsedTime : %s\n", 
+		---------getStateString( ), this.mTemp, getElapsedTime( ) ) );
+	3. microPCR_Firmware에서 branch를 pic18f4550_emul로 변경하여 PWMValue계산하는 부분 참조하여 온도 증감 값 정하기.(어려움)
+	
 #	준이형 멘토링 5주차
 ##	Date : 2016. 02. 04(목)
 ###	수업 내용

@@ -21,7 +21,20 @@ public class MyPCR extends Thread
 	private static final int	STATE_RUN		= 0x01;
 												
 	private static final double	DEEFAULT_TEMP	= 25.1;
-												
+	
+	private static final double temps[] 		= { 95.5, 72.0, 85.0, 50.0, 4.0 };
+	/*
+	 * 1. temps에서 온도를 하나씩 읽어서, start시에 [0]번째를 먼저 target에 받음, prev온도는 DEFAULT_TEMP.
+	 * 2. Thread Run에서 prev값과 target값이 다르면 target값 까지 온도를 한번 올리거나 내리고 다음 온도값을 받아옴.
+	 * 	2-1. PrevTarget보다 Target이 더 크면 현재온도를 올린다.
+	 * 	2-2. PrevTarget보다 Target이 더 작으면 온도를 내린다.
+	 * 	2-3. 현재온도가 target에 도달하면 현재 target온도를 prev에 저장하고
+	 * 		 target온도는 temps의 다음 온도를 받아온다.
+	 * 		2-3-1. index변수를 추가하여 temps순서를 안다.
+	 * 3. 같은 방법으로 온도값을 변화
+	 * 4. 끗 
+	 */									
+	
 	public MyPCR( )
 	{
 		mTemp = DEEFAULT_TEMP;
@@ -42,33 +55,36 @@ public class MyPCR extends Thread
 	
 	private boolean tempHeat = false;
 	private int timeTemp = 1;
+	private int mIndex = 0;
 	public void run( )
 	{
 		while( true )
 		{
 			if( this.state == STATE_RUN )
 			{
-				if((mTemp <= mPrevTargetTemp) && !tempHeat)
+				if( ( mTemp >= ( mTargetTemp - 0.01 ) ) 
+						&& ( mTemp <= ( mTargetTemp + 0.01 ) ) )
 				{
-					if(mTemp >= (mPrevTargetTemp - 0.1))
+					++mIndex;
+					if(mIndex >= temps.length)
 					{
-						tempHeat = true;
+						stopPCR( );
+						continue;
 					}
-					mTemp += 0.01;
-				}
-				else
-				{
-					if((mTemp >= mTargetTemp) && tempHeat)
-					{
-						if(mTemp <= (mTargetTemp + 0.01))
-						{
-							tempHeat = false;
-							stopPCR( );
-						}
-						mTemp -= 0.01;
-					}
-				}
 					
+					mTemp = mTargetTemp;
+					mTargetTemp = temps[mIndex];
+				}
+				
+				if(mTemp < mTargetTemp)
+				{
+					mTemp += 0.1;
+				}
+				else if(mTemp > mTargetTemp)
+				{
+					mTemp -= 0.1;
+				}
+				
 				timeTemp++;
 				if(timeTemp%10 == 0)
 					mElapsedTime += 1;
@@ -125,8 +141,8 @@ public class MyPCR extends Thread
 		}
 		System.out.println( "PCR 시작!" );
 		state = STATE_RUN;
-		this.mPrevTargetTemp = 90.0;
-		this.mTargetTemp = 50.0;
+		this.mPrevTargetTemp = DEEFAULT_TEMP;
+		this.mTargetTemp = temps[mIndex];
 		
 	}
 	

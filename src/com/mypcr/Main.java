@@ -11,54 +11,42 @@ public class Main
 {
 	public static void main( String[] args ) throws AWTException
 	{
-		BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
 		final MyPCR mypcr = new MyPCR( );
 		
-		mypcr.start();
+		mypcr.start( );
 		while( true )
 		{
+			BufferedReader in = new BufferedReader( new InputStreamReader( System.in ) );
 			try
 			{
 				String cmd = in.readLine( );
-				if( cmd.equalsIgnoreCase( "Start" ) )
-				{
-					mypcr.startPCR( );
-				}
-				else if( cmd.equalsIgnoreCase( "Stop" ) )
-				{
-					mypcr.stopPCR( );
-				}
-				else if( cmd.equalsIgnoreCase( "Print" ) )
-				{
-					mypcr.printStatus( );
-				}
+				if( cmd.equalsIgnoreCase( "Start" ) ) mypcr.startPCR( );
+				else if( cmd.equalsIgnoreCase( "Stop" ) ) mypcr.stopPCR( );
+				else if( cmd.equalsIgnoreCase( "Print" ) ) mypcr.printStatus( );
 				else if( cmd.equals( "monitor" ) )
 				{
 					mypcr.setMonitor( true );
-					while( true )
-					{
-						Thread t = new Thread( ) {
-							public void run( )
+					Thread t = new Thread( ) {
+						public void run( )
+						{
+							while( mypcr.isMonitoring( ) )
 							{
-								while( mypcr.isMonitoring( ) )
+								try
 								{
-									try
-									{
-										Thread.sleep( 10 );
-									}
-									catch( Exception e )
-									{
-										e.printStackTrace( );
-									}
-									mypcr.printStatus( );
+									Thread.sleep( 10 );
 								}
+								catch( Exception e )
+								{
+									e.printStackTrace( );
+								}
+								mypcr.printStatus( );
 							}
-						};
-						t.start( );
-						
-						in.readLine( );
-						mypcr.setMonitor( false );
-					}
+						}
+					};
+					t.start( );
+					
+					in.readLine( );
+					mypcr.setMonitor( false );
 				}
 			}
 			catch( IOException ioe )
