@@ -3,37 +3,34 @@ package com.mypcr.emulator;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MyPCR extends Thread
 {
-	ArrayList< Protocol >		list			= new ArrayList< Protocol >( );
-												
-	private double				mTemp;
-	private double				mPrevTargetTemp, mTargetTemp;
-	private int					state;
-	private int					mElapsedTime	= 0;
-												
-	private boolean				isMonitor		= false;
-												
-	private static final int	STATE_READY		= 0x00;
-	private static final int	STATE_RUN		= 0x01;
-												
-	private static final double	DEEFAULT_TEMP	= 25.1;
-	
-	private static final double temps[] 		= { 95.5, 72.0, 85.0, 50.0, 4.0 };
+	ArrayList< Protocol >			list			= new ArrayList< Protocol >( );
+													
+	private double					mTemp;
+	private double					mPrevTargetTemp, mTargetTemp;
+	private int						state;
+	private int						mElapsedTime	= 0;
+													
+	private boolean					isMonitor		= false;
+													
+	private static final int		STATE_READY		= 0x00;
+	private static final int		STATE_RUN		= 0x01;
+													
+	private static final double		DEEFAULT_TEMP	= 25.1;
+													
+	private static final double		temps[]			= { 95.5, 72.0, 85.0, 50.0, 4.0 };
+	private ArrayList< Protocol >	mProtocolList;
 	/*
-	 * 1. temps에서 온도를 하나씩 읽어서, start시에 [0]번째를 먼저 target에 받음, prev온도는 DEFAULT_TEMP.
-	 * 2. Thread Run에서 prev값과 target값이 다르면 target값 까지 온도를 한번 올리거나 내리고 다음 온도값을 받아옴.
-	 * 	2-1. PrevTarget보다 Target이 더 크면 현재온도를 올린다.
-	 * 	2-2. PrevTarget보다 Target이 더 작으면 온도를 내린다.
-	 * 	2-3. 현재온도가 target에 도달하면 현재 target온도를 prev에 저장하고
-	 * 		 target온도는 temps의 다음 온도를 받아온다.
-	 * 		2-3-1. index변수를 추가하여 temps순서를 안다.
-	 * 3. 같은 방법으로 온도값을 변화
-	 * 4. 끗 
-	 */									
+	 * 1. temps에서 온도를 하나씩 읽어서, start시에 [0]번째를 먼저 target에 받음, prev온도는 DEFAULT_TEMP. 2. Thread Run에서 prev값과 target값이 다르면 target값 까지 온도를 한번 올리거나 내리고 다음 온도값을 받아옴. 2-1. PrevTarget보다
+	 * Target이 더 크면 현재온도를 올린다. 2-2. PrevTarget보다 Target이 더 작으면 온도를 내린다. 2-3. 현재온도가 target에 도달하면 현재 target온도를 prev에 저장하고 target온도는 temps의 다음 온도를 받아온다. 2-3-1. index변수를 추가하여 temps순서를
+	 * 안다. 3. 같은 방법으로 온도값을 변화 4. 끗
+	 */
 	
 	public MyPCR( )
 	{
@@ -41,6 +38,33 @@ public class MyPCR extends Thread
 		mPrevTargetTemp = DEEFAULT_TEMP;
 		mTargetTemp = DEEFAULT_TEMP;
 		state = STATE_READY;
+		readProtocol( );
+	}
+	
+	private void readProtocol( )
+	{
+		String str = "";
+		String temp;
+
+		try
+		{
+			BufferedReader br = new BufferedReader( new FileReader( new File( "protocol.txt" ) ) );
+			while( ( temp = br.readLine( ) ) != null )
+			{
+				str += temp + "\n";
+			}
+		}
+		catch( FileNotFoundException e )
+		{
+			e.printStackTrace( );
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace( );
+		}
+		
+		this.makeProtocolList( str );
+		this.showProtocolList( list );
 	}
 	
 	public boolean isMonitoring( )
@@ -53,20 +77,20 @@ public class MyPCR extends Thread
 		this.isMonitor = monitor;
 	}
 	
-	private boolean tempHeat = false;
-	private int timeTemp = 1;
-	private int mIndex = 0;
+	private boolean	tempHeat	= false;
+	private int		timeTemp	= 1;
+	private int		mIndex		= 0;
+								
 	public void run( )
 	{
 		while( true )
 		{
 			if( this.state == STATE_RUN )
 			{
-				if( ( mTemp >= ( mTargetTemp - 0.01 ) ) 
-						&& ( mTemp <= ( mTargetTemp + 0.01 ) ) )
+				if( ( mTemp >= ( mTargetTemp - 0.01 ) ) && ( mTemp <= ( mTargetTemp + 0.01 ) ) )
 				{
 					++mIndex;
-					if(mIndex >= temps.length)
+					if( mIndex >= temps.length )
 					{
 						stopPCR( );
 						continue;
@@ -76,18 +100,17 @@ public class MyPCR extends Thread
 					mTargetTemp = temps[mIndex];
 				}
 				
-				if(mTemp < mTargetTemp)
+				if( mTemp < mTargetTemp )
 				{
 					mTemp += 0.1;
 				}
-				else if(mTemp > mTargetTemp)
+				else if( mTemp > mTargetTemp )
 				{
 					mTemp -= 0.1;
 				}
 				
 				timeTemp++;
-				if(timeTemp%10 == 0)
-					mElapsedTime += 1;
+				if( timeTemp % 10 == 0 ) mElapsedTime += 1;
 			}
 			else
 			{
@@ -129,8 +152,8 @@ public class MyPCR extends Thread
 	
 	public void printStatus( )
 	{
-		System.out.print( String.format( "상태 : %s, 온도 : %3.1f, elapsedTime : %s\n", getStateString( ),
-				this.mTemp, getElapsedTime( ) ) );
+		System.out.println( String.format( "Label : %s, TargetTemp : %3.1f, Remain : %ds, State : %3.1f, "
+				+ "elapsedTime : %s\n", "?", this.mTargetTemp, "?", getStateString(), this.mTemp, getElapsedTime( ) ));
 	}
 	
 	public void startPCR( )
