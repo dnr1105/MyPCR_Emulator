@@ -26,6 +26,7 @@ public class MyPCR extends Thread
 													
 	private static final double		temps[]			= { 95.5, 72.0, 85.0, 50.0, 4.0 };
 	private ArrayList< Protocol >	mProtocolList;
+	private float kp=0, ki=0, kd=0;
 	/*
 	 * 1. temps에서 온도를 하나씩 읽어서, start시에 [0]번째를 먼저 target에 받음, prev온도는 DEFAULT_TEMP. 2. Thread Run에서 prev값과 target값이 다르면 target값 까지 온도를 한번 올리거나 내리고 다음 온도값을 받아옴. 2-1. PrevTarget보다
 	 * Target이 더 크면 현재온도를 올린다. 2-2. PrevTarget보다 Target이 더 작으면 온도를 내린다. 2-3. 현재온도가 target에 도달하면 현재 target온도를 prev에 저장하고 target온도는 temps의 다음 온도를 받아온다. 2-3-1. index변수를 추가하여 temps순서를
@@ -100,14 +101,7 @@ public class MyPCR extends Thread
 					mTargetTemp = temps[mIndex];
 				}
 				
-				if( mTemp < mTargetTemp )
-				{
-					mTemp += 0.1;
-				}
-				else if( mTemp > mTargetTemp )
-				{
-					mTemp -= 0.1;
-				}
+				PID_Control();
 				
 				timeTemp++;
 				if( timeTemp % 10 == 0 ) mElapsedTime += 1;
@@ -129,6 +123,47 @@ public class MyPCR extends Thread
 				e.printStackTrace( );
 			}
 		}
+	}
+	
+	private float integralMax = (float) 2000.0;
+	private double lastIntegral = 0;
+	private double lastError = 0;
+	
+	public void PID_Control()
+	{
+		double currentErr = 0, proportional = 0, integral = 0;
+		double derivative = 0;
+		int pwmValue = 0xffff;
+		double emul_value = 0.0;
+
+		kp = 460;
+		ki = (float)0.2;
+		kd = 3000;
+
+		currentErr = mTargetTemp - mTemp;
+		proportional = currentErr;
+		integral = currentErr + lastIntegral;
+
+		if( integral > integralMax )
+			integral = integralMax;
+		else if( integral < -integralMax )
+			integral = -integralMax;
+
+		derivative = currentErr - lastError;
+		pwmValue = 	(int) ( kp * proportional +  ki * integral + kd * derivative );
+
+		if( pwmValue > 1023 )
+			pwmValue = 1023;
+		else if( pwmValue < 0 )
+			pwmValue = 0;
+
+		lastError = currentErr;
+		lastIntegral = integral;
+
+		if( pwmValue == 0 ) emul_value = -0.1;
+		else emul_value = ( pwmValue / 1023. );
+		
+		mTemp += emul_value;
 	}
 	
 	public String getStateString( )
