@@ -12,8 +12,6 @@ public class Main
 	public static void main( String[] args ) throws AWTException
 	{
 		final MyPCR mypcr = new MyPCR( );
-
-		System.out.println("Test");
 		
 		mypcr.start( );
 		while( true )
